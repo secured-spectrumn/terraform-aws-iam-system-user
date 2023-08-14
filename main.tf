@@ -60,8 +60,7 @@ resource "aws_iam_user_policy_attachment" "policies" {
 }
 
 module "store_write" {
-  source  = "cloudposse/ssm-parameter-store/aws"
-  version = "0.10.0"
+  source          = "git::https://github.com/secured-spectrumn/terraform-aws-ssm-parameter-store?ref=010d3a79ee0f77b18f548e6b8db673d8d2ed551f"
 
   count = local.ssm_enabled ? 1 : 0
 
@@ -70,21 +69,18 @@ module "store_write" {
       name        = local.key_id_ssm_path
       value       = aws_iam_access_key.default[0].id
       type        = "SecureString"
-      overwrite   = true
       description = "The AWS_ACCESS_KEY_ID for the ${local.username} user."
     },
     {
       name        = local.secret_ssm_path
       value       = aws_iam_access_key.default[0].secret
       type        = "SecureString"
-      overwrite   = true
       description = "The AWS_SECRET_ACCESS_KEY for the ${local.username} user."
     }], var.ssm_ses_smtp_password_enabled ? [
     {
       name        = local.smtp_password_ssm_path
       value       = aws_iam_access_key.default[0].ses_smtp_password_v4
       type        = "SecureString"
-      overwrite   = true
       description = "The AWS_SECRET_ACCESS_KEY converted into an SES SMTP password for the ${local.username} user."
     }] : []
   )
